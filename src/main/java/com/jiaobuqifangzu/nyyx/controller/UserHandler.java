@@ -5,8 +5,10 @@ import com.jiaobuqifangzu.nyyx.dao.repository.UserCourseRepository;
 import com.jiaobuqifangzu.nyyx.dao.repository.UserRepository;
 import com.jiaobuqifangzu.nyyx.domain.School;
 import com.jiaobuqifangzu.nyyx.domain.User;
+import com.jiaobuqifangzu.nyyx.domain.UserCourse;
 import com.jiaobuqifangzu.nyyx.entityForReturn.*;
 import com.jiaobuqifangzu.nyyx.req.Regreq;
+import com.jiaobuqifangzu.nyyx.somePropertiesInData.CourseUserData;
 import com.jiaobuqifangzu.nyyx.somePropertiesInData.LoginData;
 import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +16,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -271,21 +274,52 @@ public class UserHandler {
     }
 
 
-    /**
+    /**3获取用户列表：
+     *
      * 编写人：卢芮
      * 日期：2020/10/19
-     * @param userID 用户id
+
      * @param courseID 课程id
-     * 根据传入参数删除课程信息
+     * 根据传入id寻找该课程用户信息用户
      * @return 课程信息
      */
-    public LoginReturn exitCourse(@RequestParam(value = "user_id") String userID, @RequestParam(value = "course_id") String courseID){
+    @GetMapping("/getuserbycourseid")
+    public CourseUserReturn getInfomation(@RequestParam(value = "course_id") Integer courseID){
 
-        //检验传入参数
+        //查询
+        List<UserCourse> byCourseId = userCourseRepository.findByCourseId(courseID);
+
+        CourseUserReturn courseUserReturn = new CourseUserReturn();
+        List<CourseUserData> courseUserDataList = new ArrayList<>();
+
+        if (byCourseId == null){
+            //查询失败
+            courseUserReturn.setCode(1);
+            courseUserReturn.setMsg("用户列表获取失败");
+            return courseUserReturn;
+        }
 
 
+        for (UserCourse userCourse : byCourseId) {
 
+            User user = userRepository.findUserById(userCourse.getUserId());
+            CourseUserData courseUser = new CourseUserData();
+            courseUser.setUser_id(user.getId());
+            courseUser.setUsername(user.getUsername());
 
-        return null;
+            courseUserDataList.add(courseUser);
+
+        }
+
+        if (byCourseId != null){
+            //查找成功
+            courseUserReturn.setCode(0);
+            courseUserReturn.setMsg("用户列表获取成功");
+            courseUserReturn.setData(courseUserDataList);
+
+            return courseUserReturn;
+        }
+
+        return courseUserReturn;
     }
 }

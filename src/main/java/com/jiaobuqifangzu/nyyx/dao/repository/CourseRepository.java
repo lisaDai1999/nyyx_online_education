@@ -4,6 +4,8 @@ package com.jiaobuqifangzu.nyyx.dao.repository;
 
 import com.jiaobuqifangzu.nyyx.domain.Course;
 import com.jiaobuqifangzu.nyyx.domain.Video;
+import org.aspectj.weaver.ast.Var;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -24,6 +26,10 @@ public interface CourseRepository extends JpaRepository<Course, Integer>, JpaSpe
 	
 	//根据course_id查找课程
 	public Course findCourseById(Integer courseId);
+
+
+	//根据id查找全部课程
+	public List<Course> findAllByIdAfter(Integer id);
 
 	/**
 	 * 根据course_name模糊查询

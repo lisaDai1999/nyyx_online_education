@@ -1,33 +1,22 @@
 package com.jiaobuqifangzu.nyyx.controller;
 
 import com.jiaobuqifangzu.nyyx.dao.repository.CourseRepository;
-import com.jiaobuqifangzu.nyyx.entityForReturn.QueryCourseReturn;
+import com.jiaobuqifangzu.nyyx.entityForReturn.*;
 import com.jiaobuqifangzu.nyyx.dao.repository.UserRepository;
 import com.jiaobuqifangzu.nyyx.dao.repository.UserCourseRepository;
 
 import com.jiaobuqifangzu.nyyx.domain.Course;
 import com.jiaobuqifangzu.nyyx.domain.User;
 import com.jiaobuqifangzu.nyyx.domain.UserCourse;
-import com.jiaobuqifangzu.nyyx.entityForReturn.FileReturn;
-import com.jiaobuqifangzu.nyyx.entityForReturn.LoginReturn;
-import com.jiaobuqifangzu.nyyx.entityForReturn.MsgReturn;
-import com.jiaobuqifangzu.nyyx.entityForReturn.QueryCourseCountInfoReturn;
-import com.jiaobuqifangzu.nyyx.entityForReturn.QueryCourseListByIdReturn;
-import com.jiaobuqifangzu.nyyx.entityForReturn.RecommendCourseReturn;
-import com.jiaobuqifangzu.nyyx.entityForReturn.CourseCountInfoReturn;
-import com.jiaobuqifangzu.nyyx.entityForReturn.CourseInfoByIdRetrun;
 
-import com.jiaobuqifangzu.nyyx.entityForReturn.CourseReturn;
-
+import com.jiaobuqifangzu.nyyx.somePropertiesInData.SwiperData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
 import javax.swing.plaf.ColorUIResource;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author ChenXing
@@ -309,6 +298,62 @@ public class CourseHandler {
     	}
 		return new QueryCourseReturn();
     }
+
+	/**
+	 * 1获取首页轮播图列表：
+	 * 编写人：卢芮
+	 * 日期：2020年10月23日
+	 * 输入说明：无
+	 * 输出说明：
+	 * 功能简述：返回前四个课程信息
+	 * @return 轮播图信息
+	 */
+	@GetMapping("/findswiper")
+	public SwiperReturn getSwiper(){
+
+		List<Course> all = courseRepository.findAllByIdAfter(0);
+		SwiperReturn swiperReturn = new SwiperReturn();
+
+		if (all == null){
+			//查找失败
+			swiperReturn.setCode(1);
+			swiperReturn.setMsg("轮播图获取失败");
+			return swiperReturn;
+		}
+
+		//进行排序
+		Collections.sort(all, new Comparator<Course>() {
+			@Override
+			public int compare(Course o1, Course o2) {
+				//重写比较函数
+				return o1.getCreateTime().compareTo(o2.getCreateTime());
+			}
+		});
+
+		//排序完成
+		if (all != null){
+			//查找成功，将前四个送入data中
+			List<Course> newlist = all.subList(0,4);
+			swiperReturn.setCode(0);
+			swiperReturn.setMsg("轮播图获取成功");
+			//用作data返回
+			List<SwiperData> swiperDatas = new ArrayList<>();
+
+
+			for (Course course : newlist) {
+				SwiperData swiperData = new SwiperData();
+				swiperData.setId(course.getId());
+				swiperData.setCover_route(course.getCover_route());
+				swiperDatas.add(swiperData);
+			}
+
+			swiperReturn.setData(swiperDatas);
+
+			return swiperReturn;
+		}
+
+		return null;
+	}
     
 
     /**

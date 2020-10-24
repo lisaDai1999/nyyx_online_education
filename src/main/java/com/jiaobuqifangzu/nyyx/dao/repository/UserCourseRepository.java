@@ -20,6 +20,8 @@ public interface UserCourseRepository extends JpaRepository<UserCourse, Integer>
     public Course deleteByUserIdAndCourseId(Integer userid, Integer courseid);
     
 
+
+    List<UserCourse> findByCourseId(Integer id);
     
     /**
      * 获取报课人数最多的前5门课
