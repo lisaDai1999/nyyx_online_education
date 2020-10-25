@@ -25,6 +25,7 @@ public interface CourseRepository extends JpaRepository<Course, Integer>, JpaSpe
     public List<Course> findCoursesByTeacher_id(@Param("teacherId") Integer teacherId);
 	
 	//根据course_id查找课程
+//	@Query(value = "", nativeQuery = true)
 	public Course findCourseById(Integer courseId);
 
 
@@ -42,7 +43,7 @@ public interface CourseRepository extends JpaRepository<Course, Integer>, JpaSpe
 	 * 输出说明：根据course_name模糊查询得到course课程列表
 	 * 功能简述：根据course_name模糊查询
 	 */
-    @Query(value = "SELECT * FROM course WHERE course_name LIKE '%?%' ORDER BY create_time DESC", nativeQuery = true)
-    public List<Course> findAllByCourseNameLike(String course_name);
+    @Query(value = "SELECT * FROM course WHERE course_name LIKE %?1% ORDER BY create_time DESC", nativeQuery = true)
+    public List<Course> findAllByCourseNameLike(@Param("course_name") String course_name);
 
 }

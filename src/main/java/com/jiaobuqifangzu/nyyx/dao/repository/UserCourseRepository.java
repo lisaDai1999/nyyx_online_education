@@ -5,6 +5,7 @@ import com.jiaobuqifangzu.nyyx.domain.UserCourse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 /**
@@ -40,6 +41,6 @@ public interface UserCourseRepository extends JpaRepository<UserCourse, Integer>
      * @return
      * 编写人：戴礼霞
      */
-    @Query(value = "SELECT course_id, COUNT(user_id) FROM user_course WHERE course_id = '1' GROUP BY course_id", nativeQuery = true)
-    public Object[] findCountByCourseId(int course_id);
+    @Query(value = "SELECT course_id, COUNT(user_id) FROM user_course WHERE course_id = :course_id GROUP BY course_id", nativeQuery = true)
+    public Object[][] findCountByCourseId(@Param("course_id") Integer course_id);
 }

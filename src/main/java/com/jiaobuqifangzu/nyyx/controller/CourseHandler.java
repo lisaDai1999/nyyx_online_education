@@ -29,7 +29,11 @@ import java.util.*;
 public class CourseHandler {
     @Autowired
     CourseRepository courseRepository;
+
+    @Autowired
     UserRepository userRepository;
+
+    @Autowired
     UserCourseRepository userCourseRepository;
 
     /**
@@ -75,6 +79,8 @@ public class CourseHandler {
      */
     @GetMapping("/findRecommend")
     public QueryCourseReturn getRecommendCourses() {	
+		QueryCourseReturn queryCourseReturn = new QueryCourseReturn();
+		
     	try {
     		/**
     		 * 获取每门课程报课人数（递减）
@@ -90,24 +96,31 @@ public class CourseHandler {
         		}
 
         		List<CourseReturn> res = new ArrayList();
+
+//        		System.out.println("!!!!IN");
         		for(Object[] obj : objs) {
         			//根据course_id查询course实体
-        			Course c = courseRepository.findCourseById(Integer.parseInt((String)obj[0]));
+        			Course c = courseRepository.findCourseById(Integer.parseInt(obj[0].toString()));
         			User t = userRepository.findUserById(c.getTeacher_id());
         			CourseReturn courseReturn = new CourseReturn(c.getId(), c.getCourse_name(), 
         					c.getCover_route(), c.getBrief_introduction(), t.getUsername());
         			res.add(courseReturn);
         		}
-        		return new QueryCourseReturn(0, "课程获取成功", res);
+        		queryCourseReturn.setCode(0);
+        		queryCourseReturn.setMsg("课程获取成功");
+        		queryCourseReturn.setData(res);
+        		return queryCourseReturn;
         	}
-        	else 
-        		return new QueryCourseReturn(1, "课程获取失败");
+        	else {
+        		queryCourseReturn.setCode(1);
+        		queryCourseReturn.setMsg("课程获取失败");
+            	return queryCourseReturn;
+        	}
     		
     	} catch(Exception e) {
     		e.printStackTrace();
     	}
-    	
-    	return new QueryCourseReturn();
+    	return queryCourseReturn;
     }
 
     /**
@@ -121,24 +134,30 @@ public class CourseHandler {
      * 功能简述：查询指定课程信息
      */
     @GetMapping("/findCourseInfo")
-    public QueryCourseCountInfoReturn findCourseInfo(int course_id) {
+    public QueryCourseCountInfoReturn findCourseInfo(@RequestParam(value = "course_id") int course_id) {
+    	QueryCourseCountInfoReturn queryCourseCountInfoReturn = new QueryCourseCountInfoReturn();
     	try {
     		//在user_course表中统计指定课程的报课人数
-    		Object[] obj = userCourseRepository.findCountByCourseId(course_id);
+    		Object[][] obj = userCourseRepository.findCountByCourseId(course_id);
     		//根据course_id获取课程实体
     		Course c = courseRepository.findCourseById(course_id);
     		//根据课程的teacher_id获取teacher_user实体
     		User t = userRepository.findUserById(c.getTeacher_id());
-    		
+
     		CourseCountInfoReturn courseCountInfoReturn = new CourseCountInfoReturn(c.getCover_route(), c.getCourse_name(), 
-    				c.getBrief_introduction(), c.getTeacher_id(), t.getUsername(), Integer.parseInt((String) obj[1]));
+    				c.getBrief_introduction(), c.getTeacher_id(), t.getUsername(), Integer.parseInt(obj[0][1].toString()));
     		
-    		return new QueryCourseCountInfoReturn(0, "课程信息获取成功", courseCountInfoReturn);
+    		queryCourseCountInfoReturn.setCode(0);
+    		queryCourseCountInfoReturn.setMsg("课程信息获取成功");
+    		queryCourseCountInfoReturn.setData(courseCountInfoReturn);
+        	return queryCourseCountInfoReturn;
     		
     	} catch(Exception e) {
     		e.printStackTrace();
     	}
-    	return new QueryCourseCountInfoReturn(1, "课程信息获取失败");
+    	queryCourseCountInfoReturn.setCode(1);
+    	queryCourseCountInfoReturn.setMsg("课程信息获取失败");
+    	return queryCourseCountInfoReturn;
     }
     
     
@@ -154,7 +173,8 @@ public class CourseHandler {
      * 功能简述：根据user_id查询课程列表
      */
     @GetMapping("/findByUserId")
-    public QueryCourseReturn findByUserID(Integer user_id) {
+    public QueryCourseReturn findByUserID(@RequestParam(value = "user_id") Integer user_id) {
+    	QueryCourseReturn queryCourseReturn = new QueryCourseReturn();
     	try {
     		List<CourseReturn> res = new ArrayList();
 			//根据user_id查询user_course表
@@ -171,14 +191,21 @@ public class CourseHandler {
         					c.getCover_route(), c.getBrief_introduction(), u.getUsername());
         			res.add(courseReturn);
     			}//for
-        		return new QueryCourseReturn(0, "课程信息获取成功", res);
+    			queryCourseReturn.setCode(0);
+    			queryCourseReturn.setMsg("课程信息获取成功");
+    			queryCourseReturn.setData(res);
+    			return queryCourseReturn;
     		}//if
-    		else
-    			return new QueryCourseReturn(1, "课程信息获取失败");
+    		else {
+    			queryCourseReturn.setCode(1);
+    			queryCourseReturn.setMsg("课程信息获取失败");
+    			return queryCourseReturn;
+    		}
+    		
     	} catch(Exception e) {
     		e.printStackTrace();
     	}
-		return new QueryCourseReturn();
+    	return queryCourseReturn;
     }
     
     
@@ -194,29 +221,34 @@ public class CourseHandler {
      * 功能简述：
      */
     @GetMapping("/findByTeacherId")
-    public QueryCourseListByIdReturn findByTeacherId(int teacher_id) {
+    public QueryCourseListByIdReturn findByTeacherId(@RequestParam(value = "teacherId") int teacherId) {
+    	QueryCourseListByIdReturn queryCourseListByIdReturn = new QueryCourseListByIdReturn();
     	try {
     		List<CourseInfoByIdRetrun> res = new ArrayList();
     		//根据teacher_id查询课程列表
-    		List<Course> courses = courseRepository.findCoursesByTeacher_id(teacher_id);
+    		List<Course> courses = courseRepository.findCoursesByTeacher_id(teacherId);
     		for(Course c : courses) {
     			/**
     			 * 统计每门课程的报课人数
     			 * 查询结果按行返回给Object[]
     			 */
-    			Object[] obj = userCourseRepository.findCountByCourseId(c.getId());
+    			Object[][] obj = userCourseRepository.findCountByCourseId(c.getId());
     			
     			CourseInfoByIdRetrun courseInfoReturn = new CourseInfoByIdRetrun(c.getId(), c.getCover_route(), 
-    					c.getCourse_name(), c.getBrief_introduction(), Integer.parseInt((String)obj[1]));
+    					c.getCourse_name(), c.getBrief_introduction(), Integer.parseInt(obj[0][1].toString()));
     			res.add(courseInfoReturn);
     		}
-    		return new QueryCourseListByIdReturn(0, "课程信息获取成功", res);
+    		queryCourseListByIdReturn.setCode(0);
+    		queryCourseListByIdReturn.setMsg("课程信息获取成功");
+    		queryCourseListByIdReturn.setData(res);
+    		return queryCourseListByIdReturn;
     		
     	} catch(Exception e) {
     		e.printStackTrace();
     	}
-    	
-    	return new QueryCourseListByIdReturn(1, "课程信息获取失败");
+    	queryCourseListByIdReturn.setCode(1);
+    	queryCourseListByIdReturn.setMsg("课程信息获取失败");
+    	return queryCourseListByIdReturn;
     }
 
     /**
@@ -231,12 +263,17 @@ public class CourseHandler {
      * 功能简述：
      */
     @GetMapping("/findCourseByCourseName")
-    public QueryCourseReturn findCourseByCourseName(String course_name) {
+    public QueryCourseReturn findCourseByCourseName(@RequestParam(value = "course_name") String course_name) {
+    	QueryCourseReturn queryCourseReturn = new QueryCourseReturn();
+    	
     	try {
         	//模糊查询找到符合的course课程列表
     		List<Course> courses = courseRepository.findAllByCourseNameLike(course_name);
-    		
+
     		List<CourseReturn> res = new ArrayList();
+    		System.out.println("!!INFO!!");
+
+    		System.out.println("SIZE" + courses.size());
     		if(courses.size() > 0) {
         		for(Course c : courses) {
         			//根据course表中的teacher_id查找user_teacher实体
@@ -246,15 +283,23 @@ public class CourseHandler {
             				c.getCourse_name(), c.getBrief_introduction(), t.getUsername());
             		res.add(courseReturn);
         		}
-        		return new QueryCourseReturn(0, "课程信息获取成功", res);
+        		queryCourseReturn.setCode(0);
+        		queryCourseReturn.setMsg("课程信息获取成功");
+        		queryCourseReturn.setData(res);
+        		return queryCourseReturn;
+        	
     		}
-    		else {
-    			return new QueryCourseReturn(1, "课程信息获取失败");
-    		}
+//    		else {
+//    			queryCourseReturn.setCode(1);
+//    			queryCourseReturn.setMsg("课程信息获取失败");
+//    			return queryCourseReturn;
+//    		}
     	} catch(Exception e) {
     		e.printStackTrace();
     	}
-		return new QueryCourseReturn(1, "课程信息获取失败");
+		queryCourseReturn.setCode(1);
+		queryCourseReturn.setMsg("课程信息获取失败");
+		return queryCourseReturn;
     }
     
     
@@ -270,7 +315,8 @@ public class CourseHandler {
      * 功能简述：根据teacher_name查询课程列表
      */
     @GetMapping("/findCourseByTeacherName")
-    public QueryCourseReturn findCourseByTeacherName(String teacher_name) {
+    public QueryCourseReturn findCourseByTeacherName(@RequestParam(value = "username") String teacher_name) {
+    	QueryCourseReturn queryCourseReturn = new QueryCourseReturn();
     	try {
         	//根据teacher_name找到教师列表
         	List<User> teachers = userRepository.findAllByNameLike(teacher_name);
@@ -289,14 +335,22 @@ public class CourseHandler {
         				}
         			}//if(tCourses.size() > 0)
         		}//for
-        		return new QueryCourseReturn(0, "课程信息获取成功", res);
+        		queryCourseReturn.setCode(0);
+        		queryCourseReturn.setMsg("课程信息获取成功");
+        		queryCourseReturn.setData(res);
+        		return queryCourseReturn;
         	}//if(teachers.size()> 0)
-        	else
-        		return new QueryCourseReturn(1, "课程信息获取失败");
+        	else {
+        		queryCourseReturn.setCode(1);
+        		queryCourseReturn.setMsg("课程信息获取失败");
+        		return queryCourseReturn;
+        	}
     	} catch(Exception e) {
     		e.printStackTrace();
     	}
-		return new QueryCourseReturn();
+		queryCourseReturn.setCode(1);
+		queryCourseReturn.setMsg("课程信息获取失败");
+		return queryCourseReturn;
     }
 
 	/**

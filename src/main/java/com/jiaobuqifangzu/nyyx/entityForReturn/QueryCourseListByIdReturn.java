@@ -36,12 +36,6 @@ public class QueryCourseListByIdReturn {
 		this.code = code;
 		this.msg = msg;
 	}
-	
-	public QueryCourseListByIdReturn(int code, String msg, List<CourseInfoByIdRetrun> data) {
-		this.code = code;
-		this.msg = msg;
-		this.data = data;
-	}
 
 	public int getCode() {
 		return code;

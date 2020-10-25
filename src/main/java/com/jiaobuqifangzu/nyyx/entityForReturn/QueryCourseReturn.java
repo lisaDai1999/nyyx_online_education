@@ -35,12 +35,6 @@ public class QueryCourseReturn {
 		this.msg = msg;
 	}
 	
-	public QueryCourseReturn(int code, String msg, List<CourseReturn> data) {
-		this.code = code;
-		this.msg = msg;
-		this.data = data;
-	}
-	
 	public int getCode() {
 		return code;
 	}

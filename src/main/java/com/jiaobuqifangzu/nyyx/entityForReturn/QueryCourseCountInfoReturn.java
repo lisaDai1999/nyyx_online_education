@@ -36,12 +36,6 @@ public class QueryCourseCountInfoReturn {
 		this.code = code;
 		this.msg = msg;
 	}
-	
-	public QueryCourseCountInfoReturn(int code, String msg, CourseCountInfoReturn data) {
-		this.code = code;
-		this.msg = msg;
-		this.data = data;
-	}
 
 	public int getCode() {
 		return code;
