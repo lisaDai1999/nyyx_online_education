@@ -33,7 +33,7 @@ public class UserCourseHandler {
      * 功能简述：根据用户id、课程id查询user_course表中是否存在该记录
      */
     @GetMapping("/findUser")
-    public MsgReturn findUserInUserCourse(@RequestParam(value = "user_id") int user_id, @RequestParam(value = "user_id") int course_id) {
+    public MsgReturn findUserInUserCourse(@RequestParam(value = "user_id") int user_id, @RequestParam(value = "course_id") int course_id) {
     	try {
         	//数据库查询
         	List<UserCourse> res = userCourseRepository.

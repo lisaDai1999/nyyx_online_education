@@ -15,7 +15,7 @@ import java.util.List;
 public interface UserCourseRepository extends JpaRepository<UserCourse, Integer>, JpaSpecificationExecutor<UserCourse> {
 
     public List<UserCourse> findUserCoursesByUserId(Integer id);
-    public List<UserCourse> findUserCourseByUserIdAndCourseId(Integer userid,Integer courserid);
+    public List<UserCourse> findUserCourseByUserIdAndCourseId(Integer userid, Integer courserid);
 
     //根据用户id和课程id删除课程
     public Course deleteByUserIdAndCourseId(Integer userid, Integer courseid);

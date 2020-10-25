@@ -70,7 +70,7 @@ public class CommentHandler {
      * 功能简述：获取评论
      */
     @GetMapping("/all")
-    public CommentRe getAll(@RequestParam(value = "video_id") Integer video_id) {
+    public CommentRe getAll(@RequestParam(value = "id") Integer video_id) {
         //返回结果
         CommentRe result = new CommentRe();
         List<UserComments> re = new ArrayList<>();

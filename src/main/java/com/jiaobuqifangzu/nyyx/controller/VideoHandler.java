@@ -70,7 +70,7 @@ public class VideoHandler {
         if (reV != null) {
             videoInfoReturn.setCode(0);
             videoInfoReturn.setMsg("视频消息获取成功！");
-            videoInfoReturn.setData(new VideoInfo(reV.getVideo_title(), reV.getCover_route(), reV.getVideo_route(), reV.getBrief_introduction()));
+            videoInfoReturn.setData(new VideoInfo(reV.getVideo_route(), reV.getCover_route(), reV.getVideo_title(), reV.getBrief_introduction()));
         } else {
             videoInfoReturn.setCode(1);
             videoInfoReturn.setMsg("视频消息获取失败！");

@@ -211,8 +211,6 @@ public class UserHandler {
             msgReturn.setMsg("用户注册成功");
             return msgReturn;
         }
-
-
     }
 
     /**单元测试完成

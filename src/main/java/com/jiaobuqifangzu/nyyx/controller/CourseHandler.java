@@ -221,7 +221,7 @@ public class CourseHandler {
      * 功能简述：
      */
     @GetMapping("/findByTeacherId")
-    public QueryCourseListByIdReturn findByTeacherId(@RequestParam(value = "teacherId") int teacherId) {
+    public QueryCourseListByIdReturn findByTeacherId(@RequestParam(value = "teacher_id") int teacherId) {
     	QueryCourseListByIdReturn queryCourseListByIdReturn = new QueryCourseListByIdReturn();
     	try {
     		List<CourseInfoByIdRetrun> res = new ArrayList();
@@ -279,8 +279,8 @@ public class CourseHandler {
         			//根据course表中的teacher_id查找user_teacher实体
             		User t = userRepository.findUserById(c.getTeacher_id());
             		
-            		CourseReturn courseReturn = new CourseReturn(c.getId(), c.getCover_route(), 
-            				c.getCourse_name(), c.getBrief_introduction(), t.getUsername());
+            		CourseReturn courseReturn = new CourseReturn(c.getId(), c.getCourse_name(),
+							 c.getCover_route(), c.getBrief_introduction(), t.getUsername());
             		res.add(courseReturn);
         		}
         		queryCourseReturn.setCode(0);
@@ -315,7 +315,7 @@ public class CourseHandler {
      * 功能简述：根据teacher_name查询课程列表
      */
     @GetMapping("/findCourseByTeacherName")
-    public QueryCourseReturn findCourseByTeacherName(@RequestParam(value = "username") String teacher_name) {
+    public QueryCourseReturn findCourseByTeacherName(@RequestParam(value = "teacher_name") String teacher_name) {
     	QueryCourseReturn queryCourseReturn = new QueryCourseReturn();
     	try {
         	//根据teacher_name找到教师列表
