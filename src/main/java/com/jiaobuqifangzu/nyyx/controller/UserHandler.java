@@ -131,6 +131,7 @@ public class UserHandler {
             School school = schoolRepository.findById(user.getSchool_id()).get();
             BeanUtils.copyProperties(user,userSchool);
             userSchool.setSchool_name(school.getSchool_name());
+            userSchool.setPhone_num(user.getPhoneNum());
             userTypeReturn.setCode(0);
             userTypeReturn.setMsg("用户信息获取成功");
             userTypeReturn.setData(userSchool);
