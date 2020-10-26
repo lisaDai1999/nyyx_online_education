@@ -17,7 +17,7 @@ public class Comment {
   private int user_id;
 
   @Column(name = "video_id")
-  private int video_id;
+  private int videoId;
   @Column(name = "text")
   private String text;
 
@@ -43,11 +43,11 @@ public class Comment {
   }
 
   public int getVideo_id() {
-    return video_id;
+    return videoId;
   }
 
   public void setVideo_id(int video_id) {
-    this.video_id = video_id;
+    this.videoId = video_id;
   }
 
   public String getText() {

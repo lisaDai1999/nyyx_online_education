@@ -1,5 +1,6 @@
 package com.jiaobuqifangzu.nyyx.controller;
 
+import com.jiaobuqifangzu.nyyx.dao.repository.CommentRepository;
 import com.jiaobuqifangzu.nyyx.dao.repository.VideoRepository;
 import com.jiaobuqifangzu.nyyx.domain.Video;
 import com.jiaobuqifangzu.nyyx.entityForReturn.*;
@@ -20,7 +21,8 @@ public class VideoHandler {
     @Autowired
     VideoRepository videoRepository;
 
-
+    @Autowired
+    CommentRepository commentRepository;
     /**
      * @param course_id
      * @return
@@ -101,5 +103,22 @@ public class VideoHandler {
             e.printStackTrace();
         }
         return new LoginReturn(1, "视频上传失败");
+    }
+
+    /**
+     * 删除视频
+     * @param id
+     * @return
+     */
+    @GetMapping("/delete")
+    public MsgReturn delVideo(@RequestParam(value = "id") int id) {
+        try {
+            videoRepository.deleteById(id);
+            commentRepository.deleteCommentsByVideoId(id);
+            return new MsgReturn(0, "视频删除成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new MsgReturn(1, "视频删除失败");
     }
 }

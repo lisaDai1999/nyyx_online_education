@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ import java.util.List;
  * @author ChenXing
  * @date 2020/10/23 08:44
  */
-
+@Transactional
 public interface CommentRepository extends JpaRepository<Comment, Integer>, JpaSpecificationExecutor<Comment> {
     //新增一条评论
     @Query(value = "insert into comment (user_id, video_id, text, create_time) VALUES\n" +
@@ -31,5 +32,7 @@ public interface CommentRepository extends JpaRepository<Comment, Integer>, JpaS
     //查找所有评论
     @Query(value = "select * from comment", nativeQuery = true)
     public List<Comment> findAll();
+
+    public void deleteCommentsByVideoId(Integer id);
 
 }

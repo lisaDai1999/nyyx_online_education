@@ -6,12 +6,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 /**
  * @author ChenXing
  * @date 2020/10/9 16:44
  */
+@Transactional
 public interface UserCourseRepository extends JpaRepository<UserCourse, Integer>, JpaSpecificationExecutor<UserCourse> {
 
     public List<UserCourse> findUserCoursesByUserId(Integer id);
@@ -42,5 +44,7 @@ public interface UserCourseRepository extends JpaRepository<UserCourse, Integer>
      * 编写人：戴礼霞
      */
     @Query(value = "SELECT course_id, COUNT(user_id) FROM user_course WHERE course_id = :course_id GROUP BY course_id", nativeQuery = true)
-    public Object[][] findCountByCourseId(@Param("course_id") Integer course_id);
+    public List<Object[][]> findCountByCourseId(@Param("course_id") Integer course_id);
+
+    public void deleteUserCoursesByCourseId(Integer id);
 }

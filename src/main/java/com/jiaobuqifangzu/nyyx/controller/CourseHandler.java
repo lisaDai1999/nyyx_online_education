@@ -138,14 +138,23 @@ public class CourseHandler {
     	QueryCourseCountInfoReturn queryCourseCountInfoReturn = new QueryCourseCountInfoReturn();
     	try {
     		//在user_course表中统计指定课程的报课人数
-    		Object[][] obj = userCourseRepository.findCountByCourseId(course_id);
+//    		Object[][] obj = userCourseRepository.findCountByCourseId(course_id);
+    		List<Object[][]> object = userCourseRepository.findCountByCourseId(course_id);
+    		
+    		CourseCountInfoReturn courseCountInfoReturn = new CourseCountInfoReturn();
+    				
     		//根据course_id获取课程实体
     		Course c = courseRepository.findCourseById(course_id);
     		//根据课程的teacher_id获取teacher_user实体
     		User t = userRepository.findUserById(c.getTeacher_id());
-
-    		CourseCountInfoReturn courseCountInfoReturn = new CourseCountInfoReturn(c.getCover_route(), c.getCourse_name(), 
-    				c.getBrief_introduction(), c.getTeacher_id(), t.getUsername(), Integer.parseInt(obj[0][1].toString()));
+    		if(object.size() == 1) {
+    			Object[][] obj = object.get(0);
+        		courseCountInfoReturn = new CourseCountInfoReturn(c.getCover_route(), c.getCourse_name(), 
+        				c.getBrief_introduction(), c.getTeacher_id(), t.getUsername(), Integer.parseInt(obj[0][0].toString()));
+    		}else if(object.size() == 0) {//报课人数为0
+        		courseCountInfoReturn = new CourseCountInfoReturn(c.getCover_route(), c.getCourse_name(), 
+        				c.getBrief_introduction(), c.getTeacher_id(), t.getUsername(), 0);
+    		}
     		
     		queryCourseCountInfoReturn.setCode(0);
     		queryCourseCountInfoReturn.setMsg("课程信息获取成功");
@@ -224,19 +233,30 @@ public class CourseHandler {
     public QueryCourseListByIdReturn findByTeacherId(@RequestParam(value = "teacher_id") int teacherId) {
     	QueryCourseListByIdReturn queryCourseListByIdReturn = new QueryCourseListByIdReturn();
     	try {
+    		CourseInfoByIdRetrun courseInfoReturn = new CourseInfoByIdRetrun();
+    		
     		List<CourseInfoByIdRetrun> res = new ArrayList();
     		//根据teacher_id查询课程列表
     		List<Course> courses = courseRepository.findCoursesByTeacher_id(teacherId);
+
     		for(Course c : courses) {
     			/**
     			 * 统计每门课程的报课人数
     			 * 查询结果按行返回给Object[]
     			 */
-    			Object[][] obj = userCourseRepository.findCountByCourseId(c.getId());
-    			
-    			CourseInfoByIdRetrun courseInfoReturn = new CourseInfoByIdRetrun(c.getId(), c.getCover_route(), 
-    					c.getCourse_name(), c.getBrief_introduction(), Integer.parseInt(obj[0][1].toString()));
-    			res.add(courseInfoReturn);
+        		
+        		List<Object[][]> object = userCourseRepository.findCountByCourseId(c.getId());
+        		if(object.size() == 1) {
+        			Object[][] obj = object.get(0);
+					courseInfoReturn = new CourseInfoByIdRetrun(c.getId(), c.getCover_route(), 
+							c.getCourse_name(), c.getBrief_introduction(), Integer.parseInt(obj[0][0].toString()));
+					res.add(courseInfoReturn);
+        			
+        		}else if(object.size() == 0){//报课人数为0
+					courseInfoReturn = new CourseInfoByIdRetrun(c.getId(), c.getCover_route(), 
+							c.getCourse_name(), c.getBrief_introduction(), 0);
+					res.add(courseInfoReturn);
+        		}
     		}
     		queryCourseListByIdReturn.setCode(0);
     		queryCourseListByIdReturn.setMsg("课程信息获取成功");
@@ -422,4 +442,21 @@ public class CourseHandler {
         System.out.println("kechegnxinxi");
         return res;
     }
+
+	/**
+	 * 删除课程
+	 * @param id
+	 * @return
+	 */
+	@GetMapping("/delete")
+	public MsgReturn delVideo(@RequestParam(value = "id") int id) {
+		try {
+			courseRepository.deleteById(id);
+			userCourseRepository.deleteUserCoursesByCourseId(id);
+			return new MsgReturn(0, "课程删除成功");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new MsgReturn(1, "课程删除失败");
+	}
 }
