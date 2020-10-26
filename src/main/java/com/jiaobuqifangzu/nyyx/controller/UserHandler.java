@@ -16,7 +16,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
@@ -195,8 +197,12 @@ public class UserHandler {
         User userReq = new User();
         BeanUtils.copyProperties(user,userReq);
         userReq.setPhoneNum(user.getPhone_num());
-        //用户名已经存在
-        if (userRepository.findByUsername(userReq.getUsername()) != null){
+        userReq.setUsername(user.getUser_name());
+
+        userReq.setCreate_time(Calendar.getInstance().getTime());
+        //System.out.println(userReq.getUsername());
+        //手机号已经存在
+        if (userRepository.findByPhoneNum(user.getPhone_num()) != null){
 
             //返回的user对象的id设置为-1 ，目前并没有进行异常捕捉
             //User error_user = new User();
