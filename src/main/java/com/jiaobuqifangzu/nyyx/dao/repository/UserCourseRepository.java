@@ -43,8 +43,8 @@ public interface UserCourseRepository extends JpaRepository<UserCourse, Integer>
      * @return
      * 编写人：戴礼霞
      */
-    @Query(value = "SELECT course_id, COUNT(user_id) FROM user_course WHERE course_id = :course_id GROUP BY course_id", nativeQuery = true)
-    public List<Object[][]> findCountByCourseId(@Param("course_id") Integer course_id);
+    @Query(value = "SELECT COUNT(user_id) FROM user_course WHERE course_id = :course_id GROUP BY course_id", nativeQuery = true)
+    public List<Object[]> findCountByCourseId(@Param("course_id") Integer course_id);
 
     public void deleteUserCoursesByCourseId(Integer id);
 }

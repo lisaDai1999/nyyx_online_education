@@ -138,8 +138,7 @@ public class CourseHandler {
     	QueryCourseCountInfoReturn queryCourseCountInfoReturn = new QueryCourseCountInfoReturn();
     	try {
     		//在user_course表中统计指定课程的报课人数
-//    		Object[][] obj = userCourseRepository.findCountByCourseId(course_id);
-    		List<Object[][]> object = userCourseRepository.findCountByCourseId(course_id);
+    		List<Object[]> object = userCourseRepository.findCountByCourseId(course_id);
     		
     		CourseCountInfoReturn courseCountInfoReturn = new CourseCountInfoReturn();
     				
@@ -148,9 +147,9 @@ public class CourseHandler {
     		//根据课程的teacher_id获取teacher_user实体
     		User t = userRepository.findUserById(c.getTeacher_id());
     		if(object.size() == 1) {
-    			Object[][] obj = object.get(0);
+    			Object[] obj = object.get(0);
         		courseCountInfoReturn = new CourseCountInfoReturn(c.getCover_route(), c.getCourse_name(), 
-        				c.getBrief_introduction(), c.getTeacher_id(), t.getUsername(), Integer.parseInt(obj[0][0].toString()));
+        				c.getBrief_introduction(), c.getTeacher_id(), t.getUsername(), Integer.parseInt(obj[0].toString()));
     		}else if(object.size() == 0) {//报课人数为0
         		courseCountInfoReturn = new CourseCountInfoReturn(c.getCover_route(), c.getCourse_name(), 
         				c.getBrief_introduction(), c.getTeacher_id(), t.getUsername(), 0);
@@ -244,12 +243,11 @@ public class CourseHandler {
     			 * 统计每门课程的报课人数
     			 * 查询结果按行返回给Object[]
     			 */
-        		
-        		List<Object[][]> object = userCourseRepository.findCountByCourseId(c.getId());
+        		List<Object[]> object = userCourseRepository.findCountByCourseId(c.getId());
         		if(object.size() == 1) {
-        			Object[][] obj = object.get(0);
+        			Object[] obj = object.get(0);
 					courseInfoReturn = new CourseInfoByIdRetrun(c.getId(), c.getCover_route(), 
-							c.getCourse_name(), c.getBrief_introduction(), Integer.parseInt(obj[0][0].toString()));
+							c.getCourse_name(), c.getBrief_introduction(), Integer.parseInt(obj[0].toString()));
 					res.add(courseInfoReturn);
         			
         		}else if(object.size() == 0){//报课人数为0

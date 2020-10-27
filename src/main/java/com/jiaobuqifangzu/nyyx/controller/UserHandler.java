@@ -130,13 +130,22 @@ public class UserHandler {
             //查询成功
             User user = byId.get();
             UserSchool userSchool = new UserSchool();
-            School school = schoolRepository.findById(user.getSchool_id()).get();
-            BeanUtils.copyProperties(user,userSchool);
-            userSchool.setSchool_name(school.getSchool_name());
-            userSchool.setPhone_num(user.getPhoneNum());
-            userTypeReturn.setCode(0);
-            userTypeReturn.setMsg("用户信息获取成功");
-            userTypeReturn.setData(userSchool);
+            if(user.getUser_type() == 1){
+                School school = schoolRepository.findById(user.getSchool_id()).get();
+                BeanUtils.copyProperties(user,userSchool);
+                userSchool.setSchool_name(school.getSchool_name());
+                userSchool.setPhone_num(user.getPhoneNum());
+                userTypeReturn.setCode(0);
+                userTypeReturn.setMsg("用户信息获取成功");
+                userTypeReturn.setData(userSchool);
+            }
+            else {
+                BeanUtils.copyProperties(user, userSchool);
+                userSchool.setPhone_num(user.getPhoneNum());
+                userTypeReturn.setCode(0);
+                userTypeReturn.setMsg("用户信息获取成功");
+                userTypeReturn.setData(userSchool);
+            }
             return userTypeReturn;
         }
 
